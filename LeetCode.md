@@ -714,12 +714,177 @@ public:
 #### 10.K分链表
 
 ```c++
-// 题目:
+// 题目: 给定一个链表,将其分隔成k个连续的部分,每部分的长度应尽可能的相等,任意两部分的长度差距不能
+// 超过1,有些部分可能为null。将这k个部分按原链表上的顺序输出,前面部分的长度大于或等于后面的长度。
+
+边界条件:
+核心思想:
+时空复杂度:
+
+class Solution {
+public:
+    vector<ListNode*> splitListToParts(ListNode* root, int k) {
+      	// 先计算链表长度
+        ListNode *curr = root;
+        int len = 0;
+        while(curr != NULL) {
+            curr = curr->next;
+            len++;
+        }
+
+        vector<ListNode*> ans;
+        curr = root;
+        // k部分,每部分width个结点, 前rem个部分+1个结点
+        int width = len / k, rem = len % k;
+        for(int i = 0; i < k; i++) {
+            ListNode *head = curr;
+            int w = (i < rem) ? (width + 1) : width;
+          	// 从当前部分的头结点向后找w-1个结点
+            for(int j = 0; j < w - 1; j++) {
+                if(curr != NULL)
+                    curr = curr->next;
+            }
+          	// 将当前部分的第w个结点进行断链
+            if(curr != NULL) {
+                ListNode *prev = curr;
+                curr = curr->next;
+                prev->next = NULL;
+            }
+
+            ans.push_back(head);
+        }
+        return ans;
+    }
+};
+```
+
+#### 11.复杂链表的复制
+
+```c++
+/*
+	 题目: 在一个复杂链表中,每个结点除了有一个next指针指向下一个结点,还有一个random指针指向链表中的
+	 任意结点或者null, 请写一个函数实现对复杂链表的复制(深拷贝)。
+*/
+
+边界条件:
+核心思想:	1.哈希表映射 2.新建链表结点在原链表结点之后
+时空复杂度: 1.时间O(n), 空间O(n)  2.时间O(n), 空间O(1)
+  
+/* 
+class Node {
+  public:
+  		int val;
+  		Node *next;
+  		Node *random;
+  		Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+      }
+};
+*/
+
+// 1.哈希表法
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        
+        // 1.哈希表, 用于存储原链表的结点指针与新建链表对应结点的指针的映射关系
+        map<Node*, Node*> hMap;
+        Node *resHead = new Node(-1);
+        Node *curr = head, *resCurr = resHead;
+      	// 遍历原链表, 创建结点建立新链表, 同时存储指针的映射关系
+        while(curr != NULL) {
+            resCurr->next = new Node(curr->val);
+            hMap[curr] = resCurr->next;
+            curr = curr->next;
+            resCurr = resCurr->next;
+        }
+
+      	// 再次遍历原链表, 通过哈希表找到原链表结点的random指针在新链表中的对应指针 
+        curr = head, resCurr = resHead->next;
+        while(curr != NULL) {
+            resCurr->random = hMap[curr->random];
+            curr = curr->next;
+            resCurr = resCurr->next;
+        }
+				
+      	// 返回新链表即可
+        return resHead->next;
+    }
+};
+
+// 2.巧妙指针法
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        
+        Node *curr = head;
+  			// 遍历原链表, 在原链表的每个结点后复制一个相同的结点
+        while(curr != NULL) {
+            Node *tmp = curr->next;
+            curr->next = new Node(curr->val);
+            curr->next->next = tmp;
+            curr = tmp;
+        }
+
+        curr = head;
+      	// 复制链表结点的random指针为原链表对应结点的random指针的next值
+        while(curr != NULL && curr->next != NULL) {
+            curr->next->random = (curr->random == NULL) ? NULL : curr->random->next;
+            curr = curr->next->next;
+        }
+				
+      	// 将新链表分成原链表与赋值链表, 奇数结点为原链表结点, 偶数结点为复制链表结点
+        Node *resHead = new Node(-1);
+        Node *resCurr = resHead;
+        Node *prev = head;
+        curr = head;
+        int cnt = 1;
+        while(curr != NULL) {
+            if(cnt % 2 == 0) {
+                Node *tmp = curr->next;
+                resCurr->next = curr;
+                resCurr = curr;
+                curr = tmp;
+                prev->next = curr;
+            } else {
+                prev = curr;
+                curr = curr->next;
+            }
+            cnt++;
+        }
+        return resHead->next;
+    }
+};
+```
+
+#### 12.排序链表
+
+```c++
+// 题目: 在O(nlogn)时间复杂度和常数级空间复杂度下, 对链表进行升序排序。
+
+边界条件:
+核心思想: 自底向上的归并排序
+时空复杂度:
+
 
 
 ```
 
+### Hard
 
+#### 1.k个一组翻转链表
+
+```c++
+// 题目:
+
+边界条件:
+核心思想:
+时空复杂度:
+
+
+```
 
 
 
